@@ -114,50 +114,50 @@ int main()
     glDeleteShader(fragmentShader);
 
     // ----------------------------- buffers ---------------------------------
-    // 定点坐标 
-    float vertices[] = {
-        // 0.5f, 0.5f, 0.0f,   // 右上角
-        // 0.5f, -0.5f, 0.0f,  // 右下角
-        // -0.5f, -0.5f, 0.0f, // 左下角
-        // -0.5f, 0.5f, 0.0f   // 左上角
+    // 顶点坐标 
+    float vertices1[] = {
         // 调整顶点组成
         -1.0f, -1.0f, 0.0f, 
         -0.5f, 1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f
+    };
+
+    float vertices2[] = {
         0.0f, -1.0f, 0.0f,
         0.5f, 1.0f, 0.0f,
         1.0f, -1.0f, 0.0f
     };
 
     // 调整indices顺序
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 4
-    };
+    // unsigned int indices[] = {
+    //     0, 1, 2,
+    //     2, 3, 4
+    // };
 
-    // 绑定的VBO
-    unsigned int VBO;
-    // 一个通用的buffer，
-    glGenBuffers(1, &VBO);
-    // bind之后，任意对GL_ARRAY_BUFFER的调用，都用来配置VBO的缓冲；
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // 基本不会变，使用GL_STATIC_DRAW
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    unsigned int VBO[2], VAO[2];
+    glGenVertexArrays(2, VAO);
+    glGenBuffers(2, VBO);
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    // 绑定对应的vbo和属性指针
+    // 绑定第一个VAO和VBO
+    glBindVertexArray(VAO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // 在调用glVertexAttribPointer后，就可以解绑vbo的内容了
+    glBindVertexArray(VAO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    // 这里绑定的EBO会存在bind的VAO里，之后切换不同VAO，则它的EBO也会切换
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // unsigned int EBO;
+    // glGenBuffers(1, &EBO);
+    // // 这里绑定的EBO会存在bind的VAO里，之后切换不同VAO，则它的EBO也会切换
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // EBO不能解绑，因为它与VAO是绑定的
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -179,9 +179,13 @@ int main()
 
         glUseProgram(program);
         // 这个VAO绑定的EBO
-        glBindVertexArray(VAO);
+        glBindVertexArray(VAO[0]);
         // 从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取其索引
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindVertexArray(VAO[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         // 解绑
         glBindVertexArray(0);
 
@@ -194,10 +198,8 @@ int main()
 
     // 清理工作
     glDeleteProgram(program);
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteBuffers(1, &VBO);
-
+    glDeleteVertexArrays(2, VAO);
+    glDeleteBuffers(2, VBO);
 
     glfwTerminate();
     return 0;
