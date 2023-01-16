@@ -116,15 +116,22 @@ int main()
     // ----------------------------- buffers ---------------------------------
     // 定点坐标 
     float vertices[] = {
-        0.5f, 0.5f, 0.0f,   // 右上角
-        0.5f, -0.5f, 0.0f,  // 右下角
-        -0.5f, -0.5f, 0.0f, // 左下角
-        -0.5f, 0.5f, 0.0f   // 左上角
+        // 0.5f, 0.5f, 0.0f,   // 右上角
+        // 0.5f, -0.5f, 0.0f,  // 右下角
+        // -0.5f, -0.5f, 0.0f, // 左下角
+        // -0.5f, 0.5f, 0.0f   // 左上角
+        // 调整顶点组成
+        -1.0f, -1.0f, 0.0f, 
+        -0.5f, 1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.5f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f
     };
 
+    // 调整indices顺序
     unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 2,
+        2, 3, 4
     };
 
     // 绑定的VBO
@@ -156,7 +163,7 @@ int main()
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // 线框模式绘制
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // 渲染循环
     while(!glfwWindowShouldClose(window))
