@@ -140,6 +140,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         shader2.bind();
+        shader2.setUniform1f("transformX", -0.5f);
         glBindVertexArray(VAO[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
