@@ -62,6 +62,7 @@ int main()
     // 创建shader
     Shader shader1("src/res/shaders/vs1.vs", "src/res/shaders/fs1.fs");
     Shader shader2("src/res/shaders/vs2.vs", "src/res/shaders/fs2.fs");
+    Shader shader3("src/res/shaders/vs3.vs", "src/res/shaders/fs3.fs");
 
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
@@ -78,15 +79,22 @@ int main()
         1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f
     };
 
+    float vertices3[] = {
+        // 调整顶点组成
+        1.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        0.5f, -1.0f, 0.0f
+    };
+
     // 调整indices顺序
     // unsigned int indices[] = {
     //     0, 1, 2,
     //     2, 3, 4
     // };
 
-    unsigned int VBO[2], VAO[2];
-    glGenVertexArrays(2, VAO);
-    glGenBuffers(2, VBO);
+    unsigned int VBO[3], VAO[3];
+    glGenVertexArrays(3, VAO);
+    glGenBuffers(3, VBO);
 
     // 绑定第一个VAO和VBO
     glBindVertexArray(VAO[0]);
@@ -102,6 +110,12 @@ int main()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glBindVertexArray(VAO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices3), vertices3, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -142,6 +156,10 @@ int main()
         shader2.bind();
         shader2.setUniform1f("transformX", -0.5f);
         glBindVertexArray(VAO[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        shader3.bind();
+        glBindVertexArray(VAO[2]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // 解绑
