@@ -1,7 +1,9 @@
 #include <iostream>
+#include <cmath>
 // 管理OpenGL的函数指针
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "shader.h"
 
 void framebuffer_size_cb(GLFWwindow* window, int width, int height)
 {
@@ -16,27 +18,6 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     }
 }
-
-const char* vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-const char* fragmentShaderSource1 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);"
-    "} ";
-
-const char* fragmentShaderSource2 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);"
-    "} ";
 
 int main()
 {
@@ -79,86 +60,22 @@ int main()
 
     // ----------------------------- shader & program ---------------------------------
     // 创建shader
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // 校验shader是否compile成功
-    int success;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (success == GL_FALSE)
-    {
-        char info[512];
-        glGetShaderInfoLog(vertexShader, 512, NULL, info);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << info << std::endl;
-    }
-
-    // 创建shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource1, NULL);
-    glCompileShader(fragmentShader);
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (success == GL_FALSE)
-    {
-        char info[512];
-        glGetShaderInfoLog(fragmentShader, 512, NULL, info);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info << std::endl;
-    }
-
-    // 创建program
-    unsigned int program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (success == GL_FALSE)
-    {
-        char info[512];
-        glGetProgramInfoLog(program, 512, NULL, info);
-        std::cout << "ERROR::PROGRAM::LINK_FAILED\n" << info << std::endl;
-    }
-
-    // 创建shader
-    unsigned int fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
-    glCompileShader(fragmentShader2);
-    glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &success);
-    if (success == GL_FALSE)
-    {
-        char info[512];
-        glGetShaderInfoLog(fragmentShader2, 512, NULL, info);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info << std::endl;
-    }
-
-    // 创建program
-    unsigned int program2 = glCreateProgram();
-    glAttachShader(program2, vertexShader);
-    glAttachShader(program2, fragmentShader2);
-    glLinkProgram(program2);
-    glGetProgramiv(program2, GL_LINK_STATUS, &success);
-    if (success == GL_FALSE)
-    {
-        char info[512];
-        glGetProgramInfoLog(program2, 512, NULL, info);
-        std::cout << "ERROR::PROGRAM::LINK_FAILED\n" << info << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    glDeleteShader(fragmentShader2);
+    Shader shader1("src/res/shaders/vs1.vs", "src/res/shaders/fs1.fs");
+    Shader shader2("src/res/shaders/vs2.vs", "src/res/shaders/fs2.fs");
 
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
     float vertices1[] = {
         // 调整顶点组成
-        -1.0f, -1.0f, 0.0f, 
+        -1.0f, -1.0f, 0.0f,
         -0.5f, 1.0f, 0.0f,
         0.0f, -1.0f, 0.0f
     };
 
     float vertices2[] = {
-        0.0f, -1.0f, 0.0f,
-        0.5f, 1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f
+        0.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        0.5f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f
     };
 
     // 调整indices顺序
@@ -181,8 +98,10 @@ int main()
     glBindVertexArray(VAO[1]);
     glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -210,13 +129,17 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glUseProgram(program);
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        shader1.bind();
+        shader1.setUniform4f("color", 0.0f, greenValue, 0.0f, 1.0f);
+
         // 这个VAO绑定的EBO
         glBindVertexArray(VAO[0]);
         // 从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取其索引
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glUseProgram(program2);
+        shader2.bind();
         glBindVertexArray(VAO[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -230,9 +153,9 @@ int main()
         glfwPollEvents();
     }
 
-    // 清理工作
-    glDeleteProgram(program);
-    glDeleteProgram(program2);
+    // 析构函数
+    // glDeleteProgram(program);
+    // glDeleteProgram(program2);
     glDeleteVertexArrays(2, VAO);
     glDeleteBuffers(2, VBO);
 
