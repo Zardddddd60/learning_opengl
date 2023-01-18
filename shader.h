@@ -20,6 +20,7 @@ public:
     // void setInt(const std::string& name, int value) const;
     void setUniform4f(const std::string& name, float x, float y, float z, float w) const;
     void setUniform1f(const std::string& name, float value);
+    void setUniform1i(const std::string& name, int value);
 private:
     unsigned int m_programId;
     ShaderProgramSource parseShader(

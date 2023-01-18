@@ -57,6 +57,11 @@ void Shader::setUniform1f(const std::string& name, float value)
     glUniform1f(location, value);
 }
 
+void Shader::setUniform1i(const std::string& name, int value)
+{
+    unsigned int location = glGetUniformLocation(m_programId, name.c_str());
+    glUniform1i(location, value);
+}
 
 ShaderProgramSource Shader::parseShader(
     const std::string& vertexShaderPath,
