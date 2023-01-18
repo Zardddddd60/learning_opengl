@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 // 管理OpenGL的函数指针
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -17,6 +18,20 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
+    }
+}
+
+void processUpAndDown(GLFWwindow* window, float* mixNumber)
+{
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        // glfwSetWindowShouldClose(window, true);
+        *mixNumber = std::min(1.0f, *mixNumber + 0.1f);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        *mixNumber = std::max(0.0f, *mixNumber - 0.1f);
     }
 }
 
@@ -66,10 +81,10 @@ int main()
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // 右上
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // 右下
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // 左上
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
     };
 
     // 调整indices顺序
@@ -173,17 +188,20 @@ int main()
     glBindVertexArray(VAO);
     shader1.setUniform1i("texture1", 0);
     shader1.setUniform1i("texture2", 1);
+    float mixNumber = 0.5f;
     // 渲染循环
     while(!glfwWindowShouldClose(window))
     {
         // 处理输入
         processInput(window);
-
+        processUpAndDown(window, &mixNumber);
+        std::cout << mixNumber << std::endl;
         // 渲染指令
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // 指定要清空的缓冲的哪一个，通过缓冲位（Buffer Bit）来指定
         glClear(GL_COLOR_BUFFER_BIT);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader1.setUniform1f("mixNumber", mixNumber);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
