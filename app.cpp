@@ -81,10 +81,10 @@ int main()
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // 右上
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.55f, 0.45f,   // 右下
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  0.45f, 0.45f,   // 左下
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.45f, 0.55f    // 左上
     };
 
     // 调整indices顺序
@@ -130,13 +130,11 @@ int main()
     glGenTextures(1, &textureId);
     // glActiveTexture(GL_TEXTURE0);
     // 绑定纹理到激活的纹理单元
-    float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
     glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     int width, height, nrChannels;
     unsigned char* data = stbi_load("res/textures/container.jpeg", &width, &height, &nrChannels, 0);
     if (data)
@@ -156,8 +154,9 @@ int main()
     glGenTextures(1, &textureId2);
     glBindTexture(GL_TEXTURE_2D, textureId2);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // 要把纹理图放大应该干嘛
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     data = stbi_load("res/textures/awesomeface.png", &width, &height, &nrChannels, 0);
     if (data)
@@ -195,7 +194,6 @@ int main()
         // 处理输入
         processInput(window);
         processUpAndDown(window, &mixNumber);
-        std::cout << mixNumber << std::endl;
         // 渲染指令
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // 指定要清空的缓冲的哪一个，通过缓冲位（Buffer Bit）来指定
