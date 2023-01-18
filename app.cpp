@@ -83,17 +83,68 @@ int main()
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,     1.0f, 1.0f,   // 右上
-        0.5f, -0.5f, 0.0f,     1.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,   // 左下
-        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f    // 左上
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    // 调整indices顺序
-    unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f), 
+        glm::vec3( 2.0f,  5.0f, -15.0f), 
+        glm::vec3(-1.5f, -2.2f, -2.5f),  
+        glm::vec3(-3.8f, -2.0f, -12.3f),  
+        glm::vec3( 2.4f, -0.4f, -3.5f),  
+        glm::vec3(-1.7f,  3.0f, -7.5f),  
+        glm::vec3( 1.3f, -2.0f, -2.5f),  
+        glm::vec3( 1.5f,  2.0f, -2.5f), 
+        glm::vec3( 1.5f,  0.2f, -1.5f), 
+        glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
+    unsigned int positionLength = sizeof(cubePositions) / sizeof(cubePositions[0]);
+
+    // 调整indices顺序
+    // unsigned int indices[] = {
+    //     0, 1, 3,
+    //     1, 2, 3
+    // };
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -109,10 +160,10 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    unsigned int IBO;
-    glGenBuffers(1, &IBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), indices, GL_STATIC_DRAW);
+    // unsigned int IBO;
+    // glGenBuffers(1, &IBO);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -189,6 +240,9 @@ int main()
     shader1.setUniform1i("texture1", 0);
     shader1.setUniform1i("texture2", 1);
     float mixNumber = 0.5f;
+
+    glEnable(GL_DEPTH_TEST);
+
     // 渲染循环
     while(!glfwWindowShouldClose(window))
     {
@@ -198,14 +252,21 @@ int main()
         // 渲染指令
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // 指定要清空的缓冲的哪一个，通过缓冲位（Buffer Bit）来指定
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         shader1.setUniform1f("mixNumber", mixNumber);
 
-        glm::mat4 mat(1.0f);
-        mat = glm::translate(mat, glm::vec3(0.5f, -0.5f, 0.0f));
-        mat = glm::rotate(mat, glm::radians((float)glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
-        shader1.setUniformMatrix4fv("transform", mat);
+        // glm::mat4 model(1.0f);
+        // model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        // shader1.setUniformMatrix4fv("model", model);
+
+        glm::mat4 view(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f , -3.0f));
+        shader1.setUniformMatrix4fv("view", view);
+
+        glm::mat4 projection(1.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 1.0f, 100.0f);
+        shader1.setUniformMatrix4fv("projection", projection);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
@@ -214,16 +275,17 @@ int main()
         glBindTexture(GL_TEXTURE_2D, textureId2);
 
         // 从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取其索引
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (unsigned int i = 0; i < positionLength; i ++)
+        {
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians((float)20 * (i + 1)), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader1.setUniformMatrix4fv("model", model);
 
-        glm::mat4 mat2(1.0f);
-        mat2 = glm::translate(mat2, glm::vec3(-0.5f, 0.5f, 0.0f));
-        float scaleAmount = static_cast<float>(sin(glfwGetTime()));
-        mat2 = glm::scale(mat2, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
-        shader1.setUniformMatrix4fv("transform", mat2);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         // 解绑
         // glBindVertexArray(0);
 
@@ -239,7 +301,7 @@ int main()
     // glDeleteProgram(program2);
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &IBO);
+    // glDeleteBuffers(1, &IBO);
 
     glfwTerminate();
     return 0;
