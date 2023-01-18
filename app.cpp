@@ -203,8 +203,8 @@ int main()
         shader1.setUniform1f("mixNumber", mixNumber);
 
         glm::mat4 mat(1.0f);
-        mat = glm::translate(mat, glm::vec3(0.5f, -0.5f, 0.0f));
         mat = glm::rotate(mat, glm::radians((float)glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
+        mat = glm::translate(mat, glm::vec3(0.5f, -0.5f, 0.0f));
         shader1.setUniformMatrix4fv("transform", mat);
 
         glActiveTexture(GL_TEXTURE0);
