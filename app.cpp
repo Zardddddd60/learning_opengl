@@ -203,8 +203,8 @@ int main()
         shader1.setUniform1f("mixNumber", mixNumber);
 
         glm::mat4 mat(1.0f);
-        mat = glm::rotate(mat, glm::radians((float)glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
         mat = glm::translate(mat, glm::vec3(0.5f, -0.5f, 0.0f));
+        mat = glm::rotate(mat, glm::radians((float)glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
         shader1.setUniformMatrix4fv("transform", mat);
 
         glActiveTexture(GL_TEXTURE0);
@@ -215,6 +215,13 @@ int main()
 
         // 从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取其索引
         // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glm::mat4 mat2(1.0f);
+        mat2 = glm::translate(mat2, glm::vec3(-0.5f, 0.5f, 0.0f));
+        float scaleAmount = static_cast<float>(sin(glfwGetTime()));
+        mat2 = glm::scale(mat2, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+        shader1.setUniformMatrix4fv("transform", mat2);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // 解绑
