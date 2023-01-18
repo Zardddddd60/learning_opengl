@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "vendors/glm/glm.hpp"
 
 struct ShaderProgramSource
 {
@@ -19,8 +20,9 @@ public:
     // void setFloat(const std::string& name, float value) const;
     // void setInt(const std::string& name, int value) const;
     void setUniform4f(const std::string& name, float x, float y, float z, float w) const;
-    void setUniform1f(const std::string& name, float value);
-    void setUniform1i(const std::string& name, int value);
+    void setUniform1f(const std::string& name, float value) const;
+    void setUniform1i(const std::string& name, int value) const;
+    void setUniformMatrix4fv(const std::string& name, const glm::mat4& mat) const;
 private:
     unsigned int m_programId;
     ShaderProgramSource parseShader(

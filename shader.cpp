@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "vendors/glm/gtc/type_ptr.hpp"
 
 std::string readFile(const std::string& filepath)
 {
@@ -51,16 +52,22 @@ void Shader::setUniform4f(const std::string& name, float x, float y, float z, fl
     glUniform4f(location, x, y, z, w);
 }
 
-void Shader::setUniform1f(const std::string& name, float value)
+void Shader::setUniform1f(const std::string& name, float value) const
 {
     unsigned int location = glGetUniformLocation(m_programId, name.c_str());
     glUniform1f(location, value);
 }
 
-void Shader::setUniform1i(const std::string& name, int value)
+void Shader::setUniform1i(const std::string& name, int value) const
 {
     unsigned int location = glGetUniformLocation(m_programId, name.c_str());
     glUniform1i(location, value);
+}
+
+void Shader::setUniformMatrix4fv(const std::string& name, const glm::mat4& mat) const
+{
+    unsigned int location = glGetUniformLocation(m_programId, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 ShaderProgramSource Shader::parseShader(

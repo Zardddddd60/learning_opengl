@@ -6,6 +6,8 @@
 #include <GLFW/glfw3.h>
 #include "shader.h"
 #include "vendors/stb_image/stb_image.h"
+#include "vendors/glm/glm.hpp"
+#include "vendors/glm/gtc/matrix_transform.hpp"
 
 void framebuffer_size_cb(GLFWwindow* window, int width, int height)
 {
@@ -81,10 +83,10 @@ int main()
     // ----------------------------- buffers ---------------------------------
     // 顶点坐标 
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // 右上
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.55f, 0.45f,   // 右下
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  0.45f, 0.45f,   // 左下
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.45f, 0.55f    // 左上
+        0.5f,  0.5f, 0.0f,     1.0f, 1.0f,   // 右上
+        0.5f, -0.5f, 0.0f,     1.0f, 0.0f,   // 右下
+        -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,   // 左下
+        -0.5f,  0.5f, 0.0f,    0.0f, 1.0f    // 左上
     };
 
     // 调整indices顺序
@@ -101,12 +103,11 @@ int main()
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     unsigned int IBO;
     glGenBuffers(1, &IBO);
@@ -200,6 +201,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         shader1.setUniform1f("mixNumber", mixNumber);
+
+        glm::mat4 mat(1.0f);
+        mat = glm::translate(mat, glm::vec3(0.5f, -0.5f, 0.0f));
+        mat = glm::rotate(mat, glm::radians((float)glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
+        shader1.setUniformMatrix4fv("transform", mat);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
