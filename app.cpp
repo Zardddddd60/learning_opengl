@@ -281,7 +281,9 @@ int main()
         {
             glm::mat4 model(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians((float)20 * (i + 1)), glm::vec3(1.0f, 0.3f, 0.5f));
+            unsigned int j = i == 0 ? 3 : i;
+            j = j % 3 == 0 ? j : 0;
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians((float)20 * j), glm::vec3(1.0f, 0.3f, 0.5f));
             shader1.setUniformMatrix4fv("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
