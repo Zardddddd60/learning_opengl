@@ -111,7 +111,7 @@ void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
         isFirstMouse = false;
     }
     float xOffset = xPos - lastX;
-    float yOffset = -(yPos - lastY);
+    float yOffset = -(yPos - lastY); // yPos基于屏幕左上角（从上到下递增），lastY从下到商递增
 
     lastX = xPos;
     lastY = yPos;

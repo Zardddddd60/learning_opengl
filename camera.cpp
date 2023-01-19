@@ -50,9 +50,11 @@ void Camera::updateCameraVectors()
 
 glm::mat4 Camera::getViewMatrix() const
 {
+    // view矩阵与postion，front和cameraup有关，其中up与front有关（worldup固定）
     return glm::lookAt(m_Position, m_Position +  m_Front, m_CameraUp);
 }
 
+// 改变camera postion
 void Camera::processKeyBoard(CameraMovement direction, float deltatime)
 {
     float velocity = deltatime * m_MovementSpeed;
@@ -72,6 +74,7 @@ void Camera::processKeyBoard(CameraMovement direction, float deltatime)
     {
         m_Position += velocity * m_CameraRight;
     }
+    m_Position.y = 0.0f;
 }
 
 void Camera::processMouseScroll(float yOffset)
@@ -80,6 +83,7 @@ void Camera::processMouseScroll(float yOffset)
     m_Fov = std::max(std::min(45.0f, tempFov), 1.0f);
 }
 
+// 通过mouse移动时，x/y的差值，计算新的pitch和yaw，从而得到新的camera front
 void Camera::processMouseMove(float xOffset, float yOffset, bool constrainPitch)
 {
     xOffset *= m_MouseSensitivity;
@@ -93,6 +97,7 @@ void Camera::processMouseMove(float xOffset, float yOffset, bool constrainPitch)
         m_Pitch = std::max(std::min(m_Pitch, 89.0f), -89.0f);
     }
 
+    // 触发front变化，是一个间接的过程，position变化是直接变化
     updateCameraVectors();
 }
 
