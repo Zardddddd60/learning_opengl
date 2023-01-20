@@ -23,6 +23,7 @@ public:
     void setUniform1f(const std::string& name, float value) const;
     void setUniform1i(const std::string& name, int value) const;
     void setUniformMatrix4fv(const std::string& name, const glm::mat4& mat) const;
+    void setUniformVector3fv(const std::string& name, const glm::vec3& vec) const;
 private:
     unsigned int m_programId;
     ShaderProgramSource parseShader(

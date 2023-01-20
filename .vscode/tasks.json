@@ -18,7 +18,7 @@
                 "${workspaceFolder}/vendors/**/*.cpp",
                 "${workspaceFolder}/*.cpp",
                 "-o",
-                "${workspaceFolder}/app",
+                "${workspaceFolder}/app_light",
                 "-framework",
                 "OpenGL",
                 // "-framework",

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "vendors/glm/glm.hpp"
 
 enum CameraMovement
