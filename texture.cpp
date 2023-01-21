@@ -18,7 +18,21 @@ Texture::Texture(const std::string& filepath)
     unsigned char* data = stbi_load(filepath.c_str(), &m_Width, &m_Height, &m_BPP, 0);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        GLenum format = GL_RGB;
+        if (m_BPP == 1)
+        {
+            format = GL_RED;
+        }
+        else if (m_BPP == 3)
+        {
+            format = GL_RGB;
+        }
+        else if (m_BPP == 4)
+        {
+            format = GL_RGBA;
+        }
+        std::cout << m_BPP << std::endl;
+        glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
         // glGenerateMipmap(GL_TEXTURE_2D);
         stbi_image_free(data);
     }
