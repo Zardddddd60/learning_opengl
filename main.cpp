@@ -58,7 +58,7 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
-Camera camera(glm::vec3(2.0f, 2.0f, 10.0f));
+Camera camera(glm::vec3(-1.0f, 1.0f, -1.0f));
 
 const unsigned int initWidth = 800;
 const unsigned int initHeight = 600;
@@ -160,8 +160,6 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    float ambientStrength = 0.1f;
-    float specularStrength = 0.5f;
     float lightColor[4] = {
         1.0f, 1.0f, 1.0f, 1.0f
     };
@@ -186,8 +184,8 @@ int main()
         
         // glm::vec3 lightPos(2.2f, 2.0f, 4.0f);
 
-        // lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
-        lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 3.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
+        lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
+        // lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 1.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
         lightColorVec = glm::vec3(lightColor[0], lightColor[1], lightColor[2]);
 
         boxShader.bind();
@@ -198,12 +196,20 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)size.width / size.height, 0.1f, 100.0f);
         boxShader.setUniformMatrix4fv("projection", projection);
 
-        boxShader.setUniformVector3fv("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
         boxShader.setUniformVector3fv("viewPos", camera.getPosision());
-        boxShader.setUniformVector3fv("lightColor",  glm::vec3(lightColorVec));
-        boxShader.setUniformVector3fv("lightPos", glm::vec3(lightPosVec));
-        boxShader.setUniform1f("ambientStrength", ambientStrength);
-        boxShader.setUniform1f("specularStrength", specularStrength);
+        // 可以近似看成是材料的颜色，使用0.1系数限制过大
+        boxShader.setUniformVector3fv("material.ambient", glm::vec3(0.1) * glm::vec3(1.0f, 0.5f, 0.31f));
+        // 可以看到ambient和diffuse都是材料本身的颜色
+        boxShader.setUniformVector3fv("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+        // specular是一个自定义的颜色
+        boxShader.setUniformVector3fv("material.specular", glm::vec3(0.5f));
+        boxShader.setUniform1f("material.shininess", 32.0f);
+
+        boxShader.setUniformVector3fv("light.ambient", glm::vec3(0.1f) * lightColorVec);
+        boxShader.setUniformVector3fv("light.diffuse", glm::vec3(0.5f) * lightColorVec);
+        boxShader.setUniformVector3fv("light.specular", glm::vec3(1.0f));
+        boxShader.setUniformVector3fv("light.position", lightPosVec);
+
         boxVa.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
         boxVa.unbind();
@@ -225,11 +231,9 @@ int main()
 
         imgui.beforeRender();
         {
-            ImGui::Begin("Hello, world!"); 
-            ImGui::SliderFloat("ambientStrength", &ambientStrength, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::SliderFloat("specularStrength", &specularStrength, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::Begin("Hello, world!");
             ImGui::ColorEdit4("lightColor", lightColor);
-            ImGui::SliderFloat3("lightPos", lightPos, 0.0f, 2.0f);
+            ImGui::SliderFloat3("lightPos", lightPos, 0.0f, 5.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
         }
