@@ -58,7 +58,7 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
-Camera camera(glm::vec3(2.0f, 3.0f, 10.0f));
+Camera camera(glm::vec3(2.0f, 2.0f, 10.0f));
 
 const unsigned int initWidth = 800;
 const unsigned int initHeight = 600;
@@ -183,10 +183,11 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // 指定要清空的缓冲的哪一个，通过缓冲位（Buffer Bit）来指定
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         // glm::vec3 lightPos(2.2f, 2.0f, 4.0f);
 
-        lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
+        // lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
+        lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 3.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
         lightColorVec = glm::vec3(lightColor[0], lightColor[1], lightColor[2]);
 
         boxShader.bind();
