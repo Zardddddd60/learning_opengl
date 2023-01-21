@@ -4,9 +4,9 @@
 #include "camera.h"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 
-const float DEFALUT_SPEED = 2.5f;
+const float DEFALUT_SPEED = 5.0f;
 const float DEFALUT_FOV = 45.0f;
-const float DEFALUT_SENSITIVYTY = 0.1f;
+const float DEFALUT_SENSITIVYTY = 0.4f;
 
 Camera::Camera()
     : m_Fov(DEFALUT_FOV),
@@ -51,7 +51,7 @@ void Camera::updateCameraVectors()
 glm::mat4 Camera::getViewMatrix() const
 {
     // view矩阵与postion，front和cameraup有关，其中up与front有关（worldup固定）
-    return glm::lookAt(m_Position, m_Position +  m_Front, m_CameraUp);
+    return glm::lookAt(m_Position, m_Position +  m_Front, m_WorldUp);
 }
 
 // 改变camera postion
@@ -74,7 +74,7 @@ void Camera::processKeyBoard(CameraMovement direction, float deltatime)
     {
         m_Position += velocity * m_CameraRight;
     }
-    m_Position.y = 0.0f;
+    // m_Position.y = 0.0f;
 }
 
 void Camera::processMouseScroll(float yOffset)
@@ -103,6 +103,10 @@ void Camera::processMouseMove(float xOffset, float yOffset, bool constrainPitch)
 
 float Camera::getFov() const
 {
-    std::cout << m_Fov << std::endl;
     return m_Fov;
+}
+
+glm::vec3 Camera::getPosision() const
+{
+    return m_Position;
 }
