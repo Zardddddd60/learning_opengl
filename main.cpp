@@ -197,8 +197,8 @@ int main()
         boxShader.setUniformMatrix4fv("projection", projection);
 
         boxShader.setUniformVector3fv("viewPos", camera.getPosision());
-        // 可以近似看成是材料的颜色，使用0.1系数限制过大
-        boxShader.setUniformVector3fv("material.ambient", glm::vec3(0.1) * glm::vec3(1.0f, 0.5f, 0.31f));
+        // 可以近似看成是材料的颜色
+        boxShader.setUniformVector3fv("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
         // 可以看到ambient和diffuse都是材料本身的颜色
         boxShader.setUniformVector3fv("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
         // specular是一个自定义的颜色
