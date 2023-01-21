@@ -80,7 +80,7 @@ void Camera::processKeyBoard(CameraMovement direction, float deltatime)
 void Camera::processMouseScroll(float yOffset)
 {
     float tempFov = m_Fov - yOffset;
-    m_Fov = std::max(std::min(45.0f, tempFov), 1.0f);
+    m_Fov = std::max(std::min(90.0f, tempFov), 1.0f);
 }
 
 // 通过mouse移动时，x/y的差值，计算新的pitch和yaw，从而得到新的camera front

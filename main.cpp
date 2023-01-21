@@ -187,7 +187,7 @@ int main()
         // glm::vec3 lightPos(2.2f, 2.0f, 4.0f);
 
         // lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
-        lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 3.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
+        lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 2.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
         lightColorVec = glm::vec3(lightColor[0], lightColor[1], lightColor[2]);
 
         boxShader.bind();
