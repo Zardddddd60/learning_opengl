@@ -164,7 +164,8 @@ int main()
     Shader lightShader("res/shaders/light/light.vs", "res/shaders/light/light.fs");
 
     Texture texture0("res/textures/container2.png");
-    Texture texture1("res/textures/container2_specular.png");
+    // Texture texture1("res/textures/container2_specular.png");
+    Texture texture1("res/textures/lighting_maps_specular_color.png");
 
     glEnable(GL_DEPTH_TEST);
 
