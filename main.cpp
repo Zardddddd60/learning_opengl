@@ -166,6 +166,7 @@ int main()
     Texture texture0("res/textures/container2.png");
     // Texture texture1("res/textures/container2_specular.png");
     Texture texture1("res/textures/lighting_maps_specular_color.png");
+    Texture texture2("res/textures/matrix.jpeg");
 
     glEnable(GL_DEPTH_TEST);
 
@@ -223,6 +224,8 @@ int main()
         texture0.bind();
         boxShader.setUniform1i("material.specular", 1);
         texture1.bind(1);
+        boxShader.setUniform1i("material.emission", 2);
+        texture2.bind(2);
 
         boxVa.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
