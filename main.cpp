@@ -148,9 +148,9 @@ int main()
     WindowSize size = glfw.getActucalSize();
     updataLastXY(size.width, size.height);
     // 捕捉鼠标
-    // glfwSetInputMode(glfw.m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(glfw.m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     // 鼠标移动就调用
-    // glfwSetCursorPosCallback(glfw.m_Window, mouse_callback);
+    glfwSetCursorPosCallback(glfw.m_Window, mouse_callback);
     // 滚轮回调
     glfwSetScrollCallback(glfw.m_Window, scroll_callback);
 
@@ -224,16 +224,29 @@ int main()
         // // 可以看到ambient和diffuse都是材料本身的颜色
         // boxShader.setUniformVector3fv("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
         // specular是一个自定义的颜色
+        // 
         boxShader.setUniform1f("material.shininess", 32.0f);
 
+        // 定义光的属性，对于ambient/diffuse/speclar分别是怎样的光颜色，用于定义每种反射的影响系数，纹理相乘
         boxShader.setUniformVector3fv("light.ambient", glm::vec3(0.1f) * lightColorVec);
         boxShader.setUniformVector3fv("light.diffuse", glm::vec3(0.5f) * lightColorVec);
         boxShader.setUniformVector3fv("light.specular", glm::vec3(1.0f));
-        boxShader.setUniformVector3fv("light.position", lightPosVec);
-        // boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
+        // 计算距离衰减
         boxShader.setUniform1f("light.constant", 1.0f);
         boxShader.setUniform1f("light.linear", 0.09f);
         boxShader.setUniform1f("light.quadratic", 0.032f);
+
+        // 方向光，只有方向，没有强度的概念
+        // boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        // 点光源，只有点，有距离的概念，所以还需要加光的距离衰减参数
+        // boxShader.setUniformVector3fv("light.position", lightPosVec);
+        // flashLight，有发光点（位置），有方向，还有发光半径（超出范围只有ambient）
+        boxShader.setUniformVector3fv("light.position", camera.getPosision());
+        boxShader.setUniformVector3fv("light.direction", camera.getFront());
+        // 传递cos值进去，只用比光线与点的cos值的大小
+        boxShader.setUniform1f("light.cutOff", cos(glm::radians(12.5f)));
+        boxShader.setUniform1f("light.outerCutOff", cos(glm::radians(17.5f)));
 
         // 纹理
         boxShader.setUniform1i("material.diffuse", 0);
@@ -255,29 +268,29 @@ int main()
         boxVa.unbind();
         boxShader.unbind();
 
-        lightShader.bind();
-        lightShader.bind();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPosVec);
-        model = glm::scale(model, glm::vec3(0.2f));
-        lightShader.setUniformMatrix4fv("model", model);
-        lightShader.setUniformMatrix4fv("projection", projection);
-        lightShader.setUniformMatrix4fv("view", view);
-        lightShader.setUniformVector3fv("lightColor", lightColorVec);
-        lightVa.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        lightVa.unbind();
-        lightShader.unbind();
+        // lightShader.bind();
+        // lightShader.bind();
+        // model = glm::mat4(1.0f);
+        // model = glm::translate(model, lightPosVec);
+        // model = glm::scale(model, glm::vec3(0.2f));
+        // lightShader.setUniformMatrix4fv("model", model);
+        // lightShader.setUniformMatrix4fv("projection", projection);
+        // lightShader.setUniformMatrix4fv("view", view);
+        // lightShader.setUniformVector3fv("lightColor", lightColorVec);
+        // lightVa.bind();
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        // lightVa.unbind();
+        // lightShader.unbind();
 
-        imgui.beforeRender();
-        {
-            ImGui::Begin("Hello, world!");
-            ImGui::ColorEdit4("lightColor", lightColor);
-            ImGui::SliderFloat3("lightPos", lightPos, 0.0f, 5.0f);
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
-        imgui.afterRender();
+        // imgui.beforeRender();
+        // {
+        //     ImGui::Begin("Hello, world!");
+        //     ImGui::ColorEdit4("lightColor", lightColor);
+        //     ImGui::SliderFloat3("lightPos", lightPos, 0.0f, 5.0f);
+        //     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //     ImGui::End();
+        // }
+        // imgui.afterRender();
 
         // 交换窗口每一个像素颜色值的缓冲，被绘制出来
         // 使用“双缓冲”：前缓冲存展示的装填，后缓冲存下次渲染（即指令作用在后缓冲）

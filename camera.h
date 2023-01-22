@@ -42,4 +42,5 @@ public:
     void processMouseMove(float xOffset, float yOffset, bool constrainPitch = true);
     float getFov() const;
     glm::vec3 getPosision() const;
+    glm::vec3 getFront() const;
 };
