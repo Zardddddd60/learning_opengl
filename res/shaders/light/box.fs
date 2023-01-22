@@ -13,8 +13,13 @@ struct Light
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-    // vec3 position;
-    vec3 direction;
+
+    vec3 position;
+    // vec3 direction;
+
+    float constant;
+    float linear;
+    float quandratic;
 };
 
 out vec4 FragColor;
@@ -31,11 +36,14 @@ in vec2 TexCoords;
 void main()
 {
     // float ambientStrength = 0.1;
+    float distance = length(light.position - FragPos);
+    float attenuation = 1 / (light.constant + light.linear * distance
+        + light.quandratic * distance * distance);
     vec3 ambient = vec3(texture(material.diffuse, TexCoords)) * light.ambient;
 
     // 原来根据光源的点和着色点得到方向，现在直接就是方向
-    // vec3 normalizedLightDir = normalize(lightDir - FragPos);
-    vec3 normalizedLightDir = normalize(-light.direction);
+    vec3 normalizedLightDir = normalize(light.position - FragPos);
+    // vec3 normalizedLightDir = normalize(-light.direction);
     vec3 normalizedNormalDir = normalize(Normal);
     float diffuseStrength = max(dot(normalizedLightDir, normalizedNormalDir), 0.0);
     vec3 diffuse = (diffuseStrength * vec3(texture(material.diffuse, TexCoords))) * light.diffuse;
@@ -46,5 +54,5 @@ void main()
     float spec = pow(max(dot(reflectedLightDir, normalizedViewDir) ,0.0), material.shininess);
     vec3 specular = spec * texture(material.specular, TexCoords).rgb * light.specular;
 
-    FragColor = vec4((ambient + diffuse + specular), 1.0);
+    FragColor = vec4((ambient + diffuse + specular) * attenuation, 1.0);
 }

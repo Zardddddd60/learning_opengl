@@ -187,7 +187,8 @@ int main()
         1.0f, 1.0f, 1.0f, 1.0f
     };
     float lightPos[3] = {
-        2.2f, 2.0f, 4.0f
+        // 2.2f, 2.0f, 4.0f
+        1.2f, 1.0f, 2.0f
     };
     glm::vec3 lightPosVec(lightPos[0], lightPos[1], lightPos[2]);
     glm::vec3 lightColorVec(lightColor[0], lightColor[1], lightColor[2]);
@@ -228,8 +229,11 @@ int main()
         boxShader.setUniformVector3fv("light.ambient", glm::vec3(0.1f) * lightColorVec);
         boxShader.setUniformVector3fv("light.diffuse", glm::vec3(0.5f) * lightColorVec);
         boxShader.setUniformVector3fv("light.specular", glm::vec3(1.0f));
-        // boxShader.setUniformVector3fv("light.position", lightPosVec);
-        boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        boxShader.setUniformVector3fv("light.position", lightPosVec);
+        // boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        boxShader.setUniform1f("light.constant", 1.0f);
+        boxShader.setUniform1f("light.linear", 0.09f);
+        boxShader.setUniform1f("light.quadratic", 0.032f);
 
         // 纹理
         boxShader.setUniform1i("material.diffuse", 0);
@@ -251,19 +255,19 @@ int main()
         boxVa.unbind();
         boxShader.unbind();
 
-        // lightShader.bind();
-        // lightShader.bind();
-        // model = glm::mat4(1.0f);
-        // model = glm::translate(model, lightPosVec);
-        // model = glm::scale(model, glm::vec3(0.2f));
-        // lightShader.setUniformMatrix4fv("model", model);
-        // lightShader.setUniformMatrix4fv("projection", projection);
-        // lightShader.setUniformMatrix4fv("view", view);
-        // lightShader.setUniformVector3fv("lightColor", lightColorVec);
-        // lightVa.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
-        // lightVa.unbind();
-        // lightShader.unbind();
+        lightShader.bind();
+        lightShader.bind();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPosVec);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lightShader.setUniformMatrix4fv("model", model);
+        lightShader.setUniformMatrix4fv("projection", projection);
+        lightShader.setUniformMatrix4fv("view", view);
+        lightShader.setUniformVector3fv("lightColor", lightColorVec);
+        lightVa.bind();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        lightVa.unbind();
+        lightShader.unbind();
 
         imgui.beforeRender();
         {
