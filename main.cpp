@@ -59,8 +59,22 @@ float vertices[] = {
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f,  2.0f, -2.5f),
+    glm::vec3( 1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+};
 
-Camera camera(glm::vec3(-1.0f, 1.0f, -1.0f));
+const unsigned int cubePositionCount = sizeof(cubePositions) / sizeof(cubePositions[0]);
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 const unsigned int initWidth = 800;
 const unsigned int initHeight = 600;
@@ -164,8 +178,8 @@ int main()
     Shader lightShader("res/shaders/light/light.vs", "res/shaders/light/light.fs");
 
     Texture texture0("res/textures/container2.png");
-    // Texture texture1("res/textures/container2_specular.png");
-    Texture texture1("res/textures/lighting_maps_specular_color.png");
+    Texture texture1("res/textures/container2_specular.png");
+    // Texture texture1("res/textures/lighting_maps_specular_color.png");
 
     glEnable(GL_DEPTH_TEST);
 
@@ -198,8 +212,6 @@ int main()
         lightColorVec = glm::vec3(lightColor[0], lightColor[1], lightColor[2]);
 
         boxShader.bind();
-        glm::mat4 model(1.0f);
-        boxShader.setUniformMatrix4fv("model", model);
         glm::mat4 view = camera.getViewMatrix();
         boxShader.setUniformMatrix4fv("view", view);
         glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)size.width / size.height, 0.1f, 100.0f);
@@ -216,7 +228,8 @@ int main()
         boxShader.setUniformVector3fv("light.ambient", glm::vec3(0.1f) * lightColorVec);
         boxShader.setUniformVector3fv("light.diffuse", glm::vec3(0.5f) * lightColorVec);
         boxShader.setUniformVector3fv("light.specular", glm::vec3(1.0f));
-        boxShader.setUniformVector3fv("light.position", lightPosVec);
+        // boxShader.setUniformVector3fv("light.position", lightPosVec);
+        boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
 
         // 纹理
         boxShader.setUniform1i("material.diffuse", 0);
@@ -224,24 +237,33 @@ int main()
         boxShader.setUniform1i("material.specular", 1);
         texture1.bind(1);
 
+        glm::mat4 model(1.0f);
         boxVa.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for (unsigned int i = 0; i < cubePositionCount; i ++)
+        {
+            model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            boxShader.setUniformMatrix4fv("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+        
         boxVa.unbind();
         boxShader.unbind();
 
-        lightShader.bind();
-        lightShader.bind();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPosVec);
-        model = glm::scale(model, glm::vec3(0.2f));
-        lightShader.setUniformMatrix4fv("model", model);
-        lightShader.setUniformMatrix4fv("projection", projection);
-        lightShader.setUniformMatrix4fv("view", view);
-        lightShader.setUniformVector3fv("lightColor", lightColorVec);
-        lightVa.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        lightVa.unbind();
-        lightShader.unbind();
+        // lightShader.bind();
+        // lightShader.bind();
+        // model = glm::mat4(1.0f);
+        // model = glm::translate(model, lightPosVec);
+        // model = glm::scale(model, glm::vec3(0.2f));
+        // lightShader.setUniformMatrix4fv("model", model);
+        // lightShader.setUniformMatrix4fv("projection", projection);
+        // lightShader.setUniformMatrix4fv("view", view);
+        // lightShader.setUniformVector3fv("lightColor", lightColorVec);
+        // lightVa.bind();
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        // lightVa.unbind();
+        // lightShader.unbind();
 
         imgui.beforeRender();
         {
