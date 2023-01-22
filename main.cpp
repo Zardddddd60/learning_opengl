@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "glfw.h"
 #include "camera.h"
@@ -71,8 +72,15 @@ glm::vec3 cubePositions[] = {
     glm::vec3( 1.5f,  0.2f, -1.5f),
     glm::vec3(-1.3f,  1.0f, -1.5f)
 };
-
 const unsigned int cubePositionCount = sizeof(cubePositions) / sizeof(cubePositions[0]);
+
+glm::vec3 pointLightPositions[] = {
+    glm::vec3( 0.7f,  0.2f,  2.0f),
+    glm::vec3( 2.3f, -3.3f, -4.0f),
+    glm::vec3(-4.0f,  2.0f, -12.0f),
+    glm::vec3( 0.0f,  0.0f, -3.0f)
+};
+const unsigned int pointLightPositionCount = sizeof(pointLightPositions) / sizeof(pointLightPositions[0]);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -227,26 +235,34 @@ int main()
         // 
         boxShader.setUniform1f("material.shininess", 32.0f);
 
-        // 定义光的属性，对于ambient/diffuse/speclar分别是怎样的光颜色，用于定义每种反射的影响系数，纹理相乘
-        boxShader.setUniformVector3fv("light.ambient", glm::vec3(0.1f) * lightColorVec);
-        boxShader.setUniformVector3fv("light.diffuse", glm::vec3(0.5f) * lightColorVec);
-        boxShader.setUniformVector3fv("light.specular", glm::vec3(1.0f));
+        // 光
+        boxShader.setUniformVector3fv("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        boxShader.setUniformVector3fv("dirLight.ambient", glm::vec3(0.05f));
+        boxShader.setUniformVector3fv("dirLight.diffuse", glm::vec3(0.4f));
+        boxShader.setUniformVector3fv("dirLight.specular", glm::vec3(0.5f));
 
-        // 计算距离衰减
-        boxShader.setUniform1f("light.constant", 1.0f);
-        boxShader.setUniform1f("light.linear", 0.09f);
-        boxShader.setUniform1f("light.quadratic", 0.032f);
+        for (unsigned int i = 0; i < pointLightPositionCount; i ++)
+        {
+            std::string name = "pointLights[" + std::to_string(i) + "].";
+            boxShader.setUniformVector3fv(name + "position", pointLightPositions[i]);
+            boxShader.setUniformVector3fv(name + "ambient", glm::vec3(0.05f));
+            boxShader.setUniformVector3fv(name + "diffuse", glm::vec3(0.8f));
+            boxShader.setUniformVector3fv(name + "specular", glm::vec3(1.0f));
+            boxShader.setUniform1f(name + "constant", 1.0f);
+            boxShader.setUniform1f(name + "linear", 0.09f);
+            boxShader.setUniform1f(name + "quadratic", 0.032f);
+        }
 
-        // 方向光，只有方向，没有强度的概念
-        // boxShader.setUniformVector3fv("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-        // 点光源，只有点，有距离的概念，所以还需要加光的距离衰减参数
-        // boxShader.setUniformVector3fv("light.position", lightPosVec);
-        // flashLight，有发光点（位置），有方向，还有发光半径（超出范围只有ambient）
-        boxShader.setUniformVector3fv("light.position", camera.getPosision());
-        boxShader.setUniformVector3fv("light.direction", camera.getFront());
-        // 传递cos值进去，只用比光线与点的cos值的大小
-        boxShader.setUniform1f("light.cutOff", cos(glm::radians(12.5f)));
-        boxShader.setUniform1f("light.outerCutOff", cos(glm::radians(17.5f)));
+        boxShader.setUniformVector3fv("spotLight.position", camera.getPosision());
+        boxShader.setUniformVector3fv("spotLight.direction", camera.getFront());
+        boxShader.setUniformVector3fv("spotLight.ambient", glm::vec3(0.0f));
+        boxShader.setUniformVector3fv("spotLight.diffuse", glm::vec3(1.0f));
+        boxShader.setUniformVector3fv("spotLight.specular", glm::vec3(1.0f));
+        boxShader.setUniform1f("spotLight.constant", 1.0f);
+        boxShader.setUniform1f("spotLight.linear", 0.09f);
+        boxShader.setUniform1f("spotLight.quadratic", 0.032f);
+        boxShader.setUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        boxShader.setUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
 
         // 纹理
         boxShader.setUniform1i("material.diffuse", 0);
@@ -268,19 +284,22 @@ int main()
         boxVa.unbind();
         boxShader.unbind();
 
-        // lightShader.bind();
-        // lightShader.bind();
-        // model = glm::mat4(1.0f);
-        // model = glm::translate(model, lightPosVec);
-        // model = glm::scale(model, glm::vec3(0.2f));
-        // lightShader.setUniformMatrix4fv("model", model);
-        // lightShader.setUniformMatrix4fv("projection", projection);
-        // lightShader.setUniformMatrix4fv("view", view);
-        // lightShader.setUniformVector3fv("lightColor", lightColorVec);
-        // lightVa.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
-        // lightVa.unbind();
-        // lightShader.unbind();
+        lightShader.bind();
+        lightShader.bind();
+        lightShader.setUniformMatrix4fv("projection", projection);
+        lightShader.setUniformMatrix4fv("view", view);
+        lightShader.setUniformVector3fv("lightColor", lightColorVec);
+        lightVa.bind();
+        for (unsigned int i = 0; i < pointLightPositionCount; i ++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.2f));
+            lightShader.setUniformMatrix4fv("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+        lightVa.unbind();
+        lightShader.unbind();
 
         // imgui.beforeRender();
         // {
