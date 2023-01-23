@@ -9,78 +9,13 @@
 #include "shader.h"
 #include "self_imgui.h"
 #include "texture.h"
+#include "model.h"
 
 #include "vendors/glm/glm.hpp"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/imgui_impl_glfw.h"
 #include "vendors/imgui/imgui_impl_opengl3.h"
-
-float vertices[] = {
-    // positions          // normals           // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f),
-    glm::vec3( 2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3( 2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3( 1.3f, -2.0f, -2.5f),
-    glm::vec3( 1.5f,  2.0f, -2.5f),
-    glm::vec3( 1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-const unsigned int cubePositionCount = sizeof(cubePositions) / sizeof(cubePositions[0]);
-
-glm::vec3 pointLightPositions[] = {
-    glm::vec3( 0.7f,  0.2f,  2.0f),
-    glm::vec3( 2.3f, -3.3f, -4.0f),
-    glm::vec3(-4.0f,  2.0f, -12.0f),
-    glm::vec3( 0.0f,  0.0f, -3.0f)
-};
-const unsigned int pointLightPositionCount = sizeof(pointLightPositions) / sizeof(pointLightPositions[0]);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -164,31 +99,8 @@ int main()
 
     SelfImgui imgui(glfw.m_Window);
 
-    VertexArray boxVa;
-    VertexBuffer boxVb(vertices, sizeof(vertices));
-    VertexBufferLayout boxVbl;
-    boxVbl.push<float>(3);
-    boxVbl.push<float>(3);
-    boxVbl.push<float>(2);
-    boxVa.addBuffer(boxVb, boxVbl);
-
-    VertexArray lightVa;
-    VertexBuffer lightVb(vertices, sizeof(vertices));
-    VertexBufferLayout lightVbl;
-    lightVbl.push<float>(3);
-    lightVbl.push<float>(3);
-    // 虽然没用，但是还要加上要不然strip不对
-    lightVbl.push<float>(2);
-    lightVa.addBuffer(lightVb, lightVbl);
-
-    Shader boxShader("res/shaders/light/box.vs", "res/shaders/light/box.fs");
-
-    Shader lightShader("res/shaders/light/light.vs", "res/shaders/light/light.fs");
-
-    Texture texture0("res/textures/container2.png");
-    Texture texture1("res/textures/container2_specular.png");
-    // Texture texture1("res/textures/lighting_maps_specular_color.png");
-
+    Shader shader("res/shaders/model/model.vs", "res/shaders/model/model.fs");
+    Model robotModel(std::string("res/models/nanosuit/nanosuit.obj"));
     glEnable(GL_DEPTH_TEST);
 
     float lightColor[4] = {
@@ -215,91 +127,19 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         // glm::vec3 lightPos(2.2f, 2.0f, 4.0f);
-
-        lightPosVec = glm::vec3(lightPos[0], lightPos[1], lightPos[2]);
-        // lightPosVec = glm::vec3(2 * cos(glm::radians(glfwGetTime()) * 100.0f), 1.0f, 2 * sin(glm::radians(glfwGetTime()) * 100.0f));
-        lightColorVec = glm::vec3(lightColor[0], lightColor[1], lightColor[2]);
-
-        boxShader.bind();
+        shader.bind();
+        auto size = glfw.getActucalSize();
+        glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)size.width / (float)size.height, 0.1f, 100.0f);
         glm::mat4 view = camera.getViewMatrix();
-        boxShader.setUniformMatrix4fv("view", view);
-        glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)size.width / size.height, 0.1f, 100.0f);
-        boxShader.setUniformMatrix4fv("projection", projection);
+        shader.setUniformMatrix4fv("projection", projection);
+        shader.setUniformMatrix4fv("view", view);
 
-        boxShader.setUniformVector3fv("viewPos", camera.getPosision());
-        // // 可以近似看成是材料的颜色
-        // boxShader.setUniformVector3fv("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-        // // 可以看到ambient和diffuse都是材料本身的颜色
-        // boxShader.setUniformVector3fv("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-        // specular是一个自定义的颜色
-        // 
-        boxShader.setUniform1f("material.shininess", 32.0f);
-
-        // 光
-        boxShader.setUniformVector3fv("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-        boxShader.setUniformVector3fv("dirLight.ambient", glm::vec3(0.05f));
-        boxShader.setUniformVector3fv("dirLight.diffuse", glm::vec3(0.4f));
-        boxShader.setUniformVector3fv("dirLight.specular", glm::vec3(0.5f));
-
-        for (unsigned int i = 0; i < pointLightPositionCount; i ++)
-        {
-            std::string name = "pointLights[" + std::to_string(i) + "].";
-            boxShader.setUniformVector3fv(name + "position", pointLightPositions[i]);
-            boxShader.setUniformVector3fv(name + "ambient", glm::vec3(0.05f));
-            boxShader.setUniformVector3fv(name + "diffuse", glm::vec3(0.8f));
-            boxShader.setUniformVector3fv(name + "specular", glm::vec3(1.0f));
-            boxShader.setUniform1f(name + "constant", 1.0f);
-            boxShader.setUniform1f(name + "linear", 0.09f);
-            boxShader.setUniform1f(name + "quadratic", 0.032f);
-        }
-
-        boxShader.setUniformVector3fv("spotLight.position", camera.getPosision());
-        boxShader.setUniformVector3fv("spotLight.direction", camera.getFront());
-        boxShader.setUniformVector3fv("spotLight.ambient", glm::vec3(0.0f));
-        boxShader.setUniformVector3fv("spotLight.diffuse", glm::vec3(1.0f));
-        boxShader.setUniformVector3fv("spotLight.specular", glm::vec3(1.0f));
-        boxShader.setUniform1f("spotLight.constant", 1.0f);
-        boxShader.setUniform1f("spotLight.linear", 0.09f);
-        boxShader.setUniform1f("spotLight.quadratic", 0.032f);
-        boxShader.setUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-        boxShader.setUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
-
-        // 纹理
-        boxShader.setUniform1i("material.diffuse", 0);
-        texture0.bind();
-        boxShader.setUniform1i("material.specular", 1);
-        texture1.bind(1);
-
-        glm::mat4 model(1.0f);
-        boxVa.bind();
-        for (unsigned int i = 0; i < cubePositionCount; i ++)
-        {
-            model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            boxShader.setUniformMatrix4fv("model", model);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-        
-        boxVa.unbind();
-        boxShader.unbind();
-
-        lightShader.bind();
-        lightShader.bind();
-        lightShader.setUniformMatrix4fv("projection", projection);
-        lightShader.setUniformMatrix4fv("view", view);
-        lightShader.setUniformVector3fv("lightColor", lightColorVec);
-        lightVa.bind();
-        for (unsigned int i = 0; i < pointLightPositionCount; i ++)
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, pointLightPositions[i]);
-            model = glm::scale(model, glm::vec3(0.2f));
-            lightShader.setUniformMatrix4fv("model", model);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-        lightVa.unbind();
-        lightShader.unbind();
+        // render the loaded model
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        shader.setUniformMatrix4fv("model", model);
+        robotModel.draw(shader);
 
         // imgui.beforeRender();
         // {
