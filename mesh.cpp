@@ -1,3 +1,4 @@
+#include <iostream>
 #include "mesh.h"
 #include "vertex_buffer_layout.h"
 
@@ -5,15 +6,12 @@ Mesh::Mesh(
     std::vector<Vertex> vertices,
     std::vector<unsigned int> indices,
     std::vector<TextureStruct> textures
-): m_Vertices(vertices), m_Indices(indices), m_Textures(textures),
-    m_Vao(VertexArray()),
-    m_Vbo(VertexBuffer(&vertices[0], vertices.size() * sizeof(Vertex))),
-    m_Ibo(IndexBuffer(&indices[0], indices.size() * sizeof(unsigned int)))
+): m_Vertices(vertices), m_Indices(indices), m_Textures(textures)
 {
     setupMesh();
 }
 
-void Mesh::draw(const Shader& shader)
+void Mesh::draw(const Shader& shader) const
 {
     unsigned int diffsueCount = 1;
     unsigned int specularCount = 1;
@@ -37,18 +35,21 @@ void Mesh::draw(const Shader& shader)
 
     m_Vao.bind();
     // 使用ibo渲染
-    glDrawElements(GL_TRIANGLES, m_Vertices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(m_Indices.size()), GL_UNSIGNED_INT, 0);
     m_Vao.unbind();
 }
 
 void Mesh::setupMesh()
 {
     m_Vao.bind();
-    m_Vbo.bind();
+    m_Vbo.bindData(&m_Vertices[0], m_Vertices.size() * sizeof(m_Vertices[0]));
+    m_Ibo.bindData(&m_Indices[0], m_Indices.size() * sizeof(unsigned int));
     VertexBufferLayout vbl;
     vbl.push<float>(3);
     vbl.push<float>(3);
     vbl.push<float>(2);
+    // vbl.push<float>(3);
+    // vbl.push<float>(3);
     m_Vao.addBuffer(m_Vbo, vbl);
 
     m_Vao.unbind();

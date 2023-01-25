@@ -35,7 +35,7 @@ public:
         std::vector<TextureStruct> textures
     );
 
-    void draw(const Shader& shader);
+    void draw(const Shader& shader) const;
 
     inline std::vector<Vertex> getVertices() const {
         return m_Vertices;

@@ -2,47 +2,25 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "c++",
-            "command": "/usr/bin/clang++",
+            "type": "shell",
+            "label": "Build c++",
+            "command": "clang++",
             "args": [
-                "-std=c++17",
-                "-fdiagnostics-color=always",
-                "-Wall",
+                "--std=c++17",
+                // 编译结果带调试符号
                 "-g",
-                "-I${workspaceFolder}/dependencies/include",
-                "-L${workspaceFolder}/dependencies/library",
-                "${workspaceFolder}/dependencies/library/libglfw.3.3.dylib",
-                "${workspaceFolder}/dependencies/library/libassimp.dylib",
-                // "${workspaceFolder}/dependencies/library/libGLEW.2.2.0.dylib",
-                "${workspaceFolder}/vendors/**/*.c",
-                "${workspaceFolder}/vendors/**/*.cpp",
-                "${workspaceFolder}/*.cpp",
+                // 开启所有警告
+                "-Wall",
+                // 输出
                 "-o",
-                "${workspaceFolder}/model",
-                "-framework",
-                "OpenGL",
-                // "-framework",
-                // "Cocoa",
-                // "-framework",
-                // "IOKit",
-                // "-framework",
-                // "CoreVideo",
-                // "-framework",
-                // "CoreFoundation",
-                "-Wno-deprecated-declarations"
+                "${workspaceFolder}/build1/${fileBasenameNoExtension}",
+                "${file}"
             ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "problemMatcher": ["$msCompile"],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "detail": "compiler: /usr/bin/clang++"
+            }
         }
     ]
 }

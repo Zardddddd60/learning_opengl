@@ -3,11 +3,11 @@
 #include "vendors/stb_image/stb_image.h"
 #include <glad/glad.h>
 
-Texture::Texture(const std::string& filepath)
+Texture::Texture(const std::string& filepath, bool shouldFlip)
 {
     m_Filepath = filepath;
 
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(shouldFlip);
     glGenTextures(1, &m_TextureId);
     glBindTexture(GL_TEXTURE_2D, m_TextureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -43,7 +43,7 @@ Texture::Texture(const std::string& filepath)
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &m_TextureId);
+    // glDeleteTextures(1, &m_TextureId);
 }
 
 void Texture::bind(unsigned int slot) const

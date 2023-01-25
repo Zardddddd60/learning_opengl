@@ -9,7 +9,7 @@ private:
     std::string m_Filepath;
     int m_Width, m_Height, m_BPP;
 public:
-    Texture(const std::string& filepath);
+    Texture(const std::string& filepath, bool shouldFlip = true);
     ~Texture();
     void bind(unsigned int slot = 0) const;
     void unbind() const;

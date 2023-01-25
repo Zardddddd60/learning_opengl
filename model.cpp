@@ -10,7 +10,6 @@ void Model::loadModel(std::string path)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-
     if (
         !scene ||
         scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
@@ -42,8 +41,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 void Model::draw(const Shader& shader)
 {
-    std::cout << m_Meshes.size() << std::endl;
-    for (auto& mesh: m_Meshes)
+    for (const auto& mesh: m_Meshes)
     {
         mesh.draw(shader);
     }
@@ -165,6 +163,5 @@ Texture textureFromFile(const char* path, const std::string& directory, bool gam
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
-    Texture texture(filename);
-    return texture;
+    return Texture(filename, false);
 }

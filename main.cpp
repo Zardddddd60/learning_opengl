@@ -17,6 +17,13 @@
 #include "vendors/imgui/imgui_impl_glfw.h"
 #include "vendors/imgui/imgui_impl_opengl3.h"
 
+glm::vec3 pointLightPositions[] = {
+    glm::vec3( 0.7f,  0.2f,  2.0f),
+    glm::vec3( 2.3f, -3.3f, -4.0f),
+    glm::vec3(-4.0f,  2.0f, -12.0f),
+    glm::vec3( 0.0f,  0.0f, -3.0f)
+};
+
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 const unsigned int initWidth = 800;
@@ -83,7 +90,6 @@ void processInput(GLFWwindow* window)
         camera.processKeyBoard(RIGHT, deltaTime);
     }
 }
-
 int main()
 {
     Glfw glfw(800, 600);
@@ -133,6 +139,38 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         shader.setUniformMatrix4fv("projection", projection);
         shader.setUniformMatrix4fv("view", view);
+        shader.setUniform1f("material.shininess", 32.0f);
+
+        shader.setUniformVector3fv("viewPos", camera.getPosision());
+
+        // 光
+        shader.setUniformVector3fv("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        shader.setUniformVector3fv("dirLight.ambient", glm::vec3(0.05f));
+        shader.setUniformVector3fv("dirLight.diffuse", glm::vec3(0.4f));
+        shader.setUniformVector3fv("dirLight.specular", glm::vec3(0.5f));
+
+        for (unsigned int i = 0; i < 2; i ++)
+        {
+            std::string name = "pointLights[" + std::to_string(i) + "].";
+            shader.setUniformVector3fv(name + "position", pointLightPositions[i]);
+            shader.setUniformVector3fv(name + "ambient", glm::vec3(0.05f));
+            shader.setUniformVector3fv(name + "diffuse", glm::vec3(0.8f));
+            shader.setUniformVector3fv(name + "specular", glm::vec3(1.0f));
+            shader.setUniform1f(name + "constant", 1.0f);
+            shader.setUniform1f(name + "linear", 0.09f);
+            shader.setUniform1f(name + "quadratic", 0.032f);
+        }
+
+        shader.setUniformVector3fv("spotLight.position", camera.getPosision());
+        shader.setUniformVector3fv("spotLight.direction", camera.getFront());
+        shader.setUniformVector3fv("spotLight.ambient", glm::vec3(0.0f));
+        shader.setUniformVector3fv("spotLight.diffuse", glm::vec3(1.0f));
+        shader.setUniformVector3fv("spotLight.specular", glm::vec3(1.0f));
+        shader.setUniform1f("spotLight.constant", 1.0f);
+        shader.setUniform1f("spotLight.linear", 0.09f);
+        shader.setUniform1f("spotLight.quadratic", 0.032f);
+        shader.setUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        shader.setUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
