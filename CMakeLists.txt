@@ -5,16 +5,15 @@ project(load_model)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SRC_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/*.cpp")
-get_filename_component(LIB_HEADERS lib REALPATH)
+# get_filename_component(LIB_HEADERS lib REALPATH)
 
 include_directories(
-    ${LIB_HEADERS}
+    ${PROJECT_SOURCE_DIR}/lib
     ${PROJECT_SOURCE_DIR}/dependencies/include
     ${PROJECT_SOURCE_DIR}/vendors
 )
 
-# TODO: 查这个GLOB_RECURSE的输出
-file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/lib/*.cpp")
+file(GLOB LIB_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/lib/*.cpp")
 add_library(lib STATIC ${LIB_SOURCES})
 
 file(GLOB VENDOR_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/vendors/**/*.c" "${PROJECT_SOURCE_DIR}/vendors/**/*.cpp")
@@ -23,6 +22,7 @@ add_library(vendor STATIC ${VENDOR_SOURCES})
 
 link_directories(${PROJECT_SOURCE_DIR}/dependencies/library)
 add_executable(${PROJECT_NAME} main.cpp)
+# assmip和glfw是在link_directories自己找到的，lib和vendor是上边add_library指定的
 target_link_libraries(${PROJECT_NAME} assimp glfw lib vendor)
 # add_dependencies(${PROJECT_NAME} lib vendor)
 
