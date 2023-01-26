@@ -241,21 +241,6 @@ int main()
         // 必须加这个，否则clear GL_STENCIL_BUFFER_BIT都请不掉…
         glStencilMask(0xFF);
 
-        // shader.bind();
-        // shader.setUniformMatrix4fv("view", view);
-        // shader.setUniformMatrix4fv("projection", projection);
-        // cubeTexture.bind();
-        // shader.setUniform1i("texture1", 0);
-        // model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-        // shader.setUniformMatrix4fv("model", model);
-        // cubeVao.bind();
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // model = glm::mat4(1.0f);
-        // model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        // shader.setUniformMatrix4fv("model", model);
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
-
         // imgui.beforeRender();
         // {
         //     ImGui::Begin("Hello, world!");
