@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "vendors/glm/gtc/type_ptr.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 std::string readFile(const std::string& filepath)
 {

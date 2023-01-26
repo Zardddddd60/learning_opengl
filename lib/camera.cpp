@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "camera.h"
-#include "vendors/glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 const float DEFALUT_SPEED = 5.0f;
 const float DEFALUT_FOV = 45.0f;

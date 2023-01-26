@@ -1,8 +1,8 @@
 #include "self_imgui.h"
 
-#include "vendors/imgui/imgui.h"
-#include "vendors/imgui/imgui_impl_glfw.h"
-#include "vendors/imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 SelfImgui::SelfImgui(GLFWwindow* window)
 {

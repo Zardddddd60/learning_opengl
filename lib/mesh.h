@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "vendors/glm/glm.hpp"
+#include "glm/glm.hpp"
 #include "shader.h"
 #include "vertex_array.h"
 #include "vertex_buffer.h"

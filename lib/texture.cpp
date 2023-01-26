@@ -1,6 +1,6 @@
 #include <iostream>
 #include "texture.h"
-#include "vendors/stb_image/stb_image.h"
+#include "stb_image/stb_image.h"
 #include <glad/glad.h>
 
 Texture::Texture(const std::string& filepath, bool shouldFlip)

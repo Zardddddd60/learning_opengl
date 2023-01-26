@@ -4,12 +4,27 @@ project(load_model)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB VENDOR_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/vendors/**/*.c" "${PROJECT_SOURCE_DIR}/vendors/**/*.cpp")
 file(GLOB SRC_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/*.cpp")
+get_filename_component(LIB_HEADERS lib REALPATH)
+
+include_directories(
+    ${LIB_HEADERS}
+    ${PROJECT_SOURCE_DIR}/dependencies/include
+    ${PROJECT_SOURCE_DIR}/vendors
+)
+
+# TODO: 查这个GLOB_RECURSE的输出
+file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/lib/*.cpp")
+add_library(lib STATIC ${LIB_SOURCES})
+
+file(GLOB VENDOR_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/vendors/**/*.c" "${PROJECT_SOURCE_DIR}/vendors/**/*.cpp")
+add_library(vendor STATIC ${VENDOR_SOURCES})
+
+
 link_directories(${PROJECT_SOURCE_DIR}/dependencies/library)
-include_directories(${PROJECT_SOURCE_DIR}/dependencies/include)
-add_executable(${PROJECT_NAME} ${VENDOR_SOURCES} ${SRC_SOURCES})
-target_link_libraries(${PROJECT_NAME} assimp glfw)
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} assimp glfw lib vendor)
+# add_dependencies(${PROJECT_NAME} lib vendor)
 
 # file(GLOB VENDOR_SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/vendors/**/*.c" "${PROJECT_SOURCE_DIR}/vendors/**/*.cpp")
 # # file(GLOB VENDOR_HEADERS CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/vendors/**/*.h" "${PROJECT_SOURCE_DIR}/vendors/**/*.hpp")
