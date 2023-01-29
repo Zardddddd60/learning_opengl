@@ -112,7 +112,7 @@ float skyboxVertices[] = {
      1.0f, -1.0f,  1.0f
 };
 
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 const unsigned int initWidth = 800;
 const unsigned int initHeight = 600;
@@ -242,16 +242,6 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), (float)size.width / size.height, 0.1f, 100.0f);
 
-        glDepthMask(GL_FALSE);
-        skyboxShader.bind();
-        skyboxShader.setUniform1i("skybox", 0);
-        skyboxShader.setUniformMatrix4fv("view", glm::mat4(glm::mat3(view)));
-        skyboxShader.setUniformMatrix4fv("projection", projection);
-        skyTexture.bind(0);
-        skyboxVAO.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE);
-
         normalShader.bind();
         normalShader.setUniform1i("texture1", 0);
         // 先画cube
@@ -262,7 +252,17 @@ int main()
         normalShader.setUniformMatrix4fv("model", model);
         cubeVAO.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        
+
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.bind();
+        skyboxShader.setUniform1i("skybox", 0);
+        skyboxShader.setUniformMatrix4fv("view", glm::mat4(glm::mat3(view)));
+        skyboxShader.setUniformMatrix4fv("projection", projection);
+        skyTexture.bind(0);
+        skyboxVAO.bind();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthFunc(GL_LESS);
+
         // imgui.beforeRender();
         // {
         //     ImGui::Begin("Hello, world!");
