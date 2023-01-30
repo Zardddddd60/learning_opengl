@@ -67,6 +67,50 @@ float cubeVertices[] = {
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 };
 
+float vertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+};
+
 float skyboxVertices[] = {
     // positions          
     -1.0f,  1.0f, -1.0f,
@@ -204,17 +248,18 @@ int main()
 
     SelfImgui imgui(glfw.m_Window);
 
-    Shader normalShader("res/shaders/sky-box/sb.vs", "res/shaders/sky-box/sb.fs");
+    Shader normalShader("res/shaders/sky-box/cube.vs", "res/shaders/sky-box/cube.fs");
     Shader skyboxShader("res/shaders/sky-box/bg.vs", "res/shaders/sky-box/bg.fs");
+    Model robotModel(std::string("res/models/nanosuit/nanosuit.obj"));
 
     Texture cubeTexture("res/textures/container.jpeg");
     CubeTexture skyTexture(images);
 
     VertexArray cubeVAO;
-    VertexBuffer cubeVBO(cubeVertices, sizeof(cubeVertices));
+    VertexBuffer cubeVBO(vertices, sizeof(vertices));
     VertexBufferLayout cubeVBL;
     cubeVBL.push<float>(3);
-    cubeVBL.push<float>(2);
+    cubeVBL.push<float>(3);
     cubeVAO.addBuffer(cubeVBO, cubeVBL);
 
     VertexArray skyboxVAO;
@@ -245,13 +290,17 @@ int main()
         normalShader.bind();
         normalShader.setUniform1i("texture1", 0);
         // 先画cube
-        cubeTexture.bind(0);
+        // cubeTexture.bind(0);
+        skyTexture.bind();
         normalShader.setUniformMatrix4fv("view", view);
         normalShader.setUniformMatrix4fv("projection", projection);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
         normalShader.setUniformMatrix4fv("model", model);
-        cubeVAO.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        normalShader.setUniformVector3fv("cameraPos", camera.getPosision());
+        // cubeVAO.bind();
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        robotModel.draw(normalShader);
+
 
         glDepthFunc(GL_LEQUAL);
         skyboxShader.bind();
