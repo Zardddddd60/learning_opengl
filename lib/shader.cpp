@@ -144,3 +144,8 @@ unsigned int Shader::createShader(unsigned int type, const std::string& source)
     return shaderId;
 }
 
+void Shader::bindToUniformBlock(const std::string& name, unsigned int pointIndex) const
+{
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_programId, name.c_str());
+    glUniformBlockBinding(m_programId, uniformBlockIndex, pointIndex);
+}

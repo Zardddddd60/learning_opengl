@@ -2,3 +2,4 @@ app
 app.dSYM
 build
 bin
+local-test.*
