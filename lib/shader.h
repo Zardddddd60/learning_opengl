@@ -7,12 +7,13 @@ struct ShaderProgramSource
 {
     std::string vertexSource;
     std::string fragmentSource;
+    std::string geometrySource;
 };
 
 class Shader
 {
 public:
-    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath = "");
     ~Shader();
     void bind() const;
     void unbind() const;
@@ -29,11 +30,13 @@ private:
     unsigned int m_programId;
     ShaderProgramSource parseShader(
         const std::string& vertexShaderPath,
-        const std::string& fragmentShaderPath
+        const std::string& fragmentShaderPath,
+        const std::string& geometryShaderPath
     );
     int createProgramWithShader(
         const std::string& vertexShader,
-        const std::string& fragmentShader
+        const std::string& fragmentShader,
+        const std::string& geometryShader
     );
     unsigned int createShader(unsigned int type, const std::string& source);
 };

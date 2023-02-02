@@ -8,6 +8,9 @@
 
 std::string readFile(const std::string& filepath)
 {
+    if (filepath.empty()) {
+        return "";
+    }
     std::ifstream file;
     file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
 
@@ -25,10 +28,10 @@ std::string readFile(const std::string& filepath)
     return stream.str();
 }
 
-Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath)
 {
-    ShaderProgramSource source = parseShader(vertexShaderPath, fragmentShaderPath);
-    m_programId = createProgramWithShader(source.vertexSource, source.fragmentSource);
+    ShaderProgramSource source = parseShader(vertexShaderPath, fragmentShaderPath, geometryShaderPath);
+    m_programId = createProgramWithShader(source.vertexSource, source.fragmentSource, source.geometrySource);
 }
 
 Shader::~Shader()
@@ -79,26 +82,37 @@ void Shader::setUniformVector3fv(const std::string& name, const glm::vec3& vec) 
 
 ShaderProgramSource Shader::parseShader(
     const std::string& vertexShaderPath,
-    const std::string& fragmentShaderPath
+    const std::string& fragmentShaderPath,
+    const std::string& geometryShaderPath
 )
 {
     return {
         readFile(vertexShaderPath),
-        readFile(fragmentShaderPath)
+        readFile(fragmentShaderPath),
+        readFile(geometryShaderPath)
     };
 }
 
 int Shader::createProgramWithShader(
     const std::string& vertexShaderSource,
-    const std::string& fragmentShaderSource
+    const std::string& fragmentShaderSource,
+    const std::string& geometryShaderSource
 )
 {
+    bool hasGeometry = !geometryShaderSource.empty();
     m_programId = glCreateProgram();
     unsigned int vertexShaderId = createShader(GL_VERTEX_SHADER, vertexShaderSource);
     unsigned int fragmentShaderId = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    unsigned int geometryShaderId;
+    if (hasGeometry)
+    {
+        geometryShaderId = createShader(GL_GEOMETRY_SHADER, geometryShaderSource);
+        glAttachShader(m_programId, geometryShaderId);
+    }
 
     glAttachShader(m_programId, vertexShaderId);
     glAttachShader(m_programId, fragmentShaderId);
+
     glLinkProgram(m_programId);
     glValidateProgram(m_programId);
 
@@ -115,6 +129,10 @@ int Shader::createProgramWithShader(
 
     glDeleteShader(vertexShaderId);
     glDeleteShader(fragmentShaderId);
+    if (hasGeometry)
+    {
+        glDeleteShader(geometryShaderId);
+    }
 
     return m_programId;
 }
