@@ -13,7 +13,7 @@ VertexArray::~VertexArray()
     // glDeleteVertexArrays(1, &m_VertexArrayId);
 }
 
-void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& vbl) const
+void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& vbl)
 {
     bind();
     vb.bind();
@@ -28,7 +28,22 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& vb
         glEnableVertexAttribArray(i);
         offset += element.count * VertexBufferElement::getSizeOfByte(element.type);
     }
+
+    m_EnabledAttrib += elements.size();
 }
+
+void VertexArray::addInstanceData(const VertexBuffer& vb, const unsigned int count)
+{
+    bind();
+    vb.bind();
+    glEnableVertexAttribArray(m_EnabledAttrib);
+    glVertexAttribPointer(m_EnabledAttrib, count, GL_FLOAT, GL_FALSE, count * sizeof(float), (void*)0);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribDivisor(m_EnabledAttrib, 1);
+    vb.unbind();
+    m_EnabledAttrib += 1;
+}
+
 
 void VertexArray::bind() const
 {
