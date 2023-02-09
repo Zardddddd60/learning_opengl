@@ -47,6 +47,11 @@ void Model::draw(const Shader& shader)
     }
 }
 
+// std::vector<Mesh> Model::getMeshes() const{
+//     return m_Meshes;
+// }
+
+
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     std::vector<Vertex> vertices;

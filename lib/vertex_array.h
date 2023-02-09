@@ -14,6 +14,7 @@ public:
 
     void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& vbl);
     void addInstanceData(const VertexBuffer& vb, const unsigned int count);
+    void addMat4InstanceData(const VertexBuffer& vb, const unsigned int count);
     void bind() const;
     void unbind() const;
 };

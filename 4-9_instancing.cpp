@@ -132,7 +132,10 @@ int main()
     vao.addBuffer(vb, vbl);
 
     VertexBuffer vb2(&translations[0], sizeof(glm::vec2) * 100);
-    vao.addInstanceData(vb2, 2);
+    // vao.addInstanceData(vb2, 2);
+    VertexBufferLayout vbl2;
+    vbl2.push<glm::vec2>(2, true);
+    vao.addBuffer(vb2, vbl2);
 
     // glEnable(GL_DEPTH_TEST);
 

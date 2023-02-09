@@ -43,11 +43,15 @@ public:
     inline std::vector<TextureStruct> getTextures() const {
         return m_Textures;
     };
+    // inline VertexArray& getVAO()
+    // {
+    //     return m_Vao;
+    // }
+    std::vector<unsigned int> m_Indices;
+    VertexArray m_Vao;
 private:
     std::vector<Vertex> m_Vertices;
-    std::vector<unsigned int> m_Indices;
     std::vector<TextureStruct> m_Textures;
-    VertexArray m_Vao;
     VertexBuffer m_Vbo;
     IndexBuffer m_Ibo;
 

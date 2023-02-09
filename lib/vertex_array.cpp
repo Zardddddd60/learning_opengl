@@ -23,9 +23,14 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& vb
 
     for (unsigned int i = 0; i < elements.size(); i ++)
     {
+        const unsigned int currentAttribIndex = m_EnabledAttrib + i;
         const auto& element = elements[i];
-        glVertexAttribPointer(i, element.count, element.type, element.normalized, vbl.getStride(), (void*)offset);
-        glEnableVertexAttribArray(i);
+        glEnableVertexAttribArray(currentAttribIndex);
+        glVertexAttribPointer(currentAttribIndex, element.count, element.type, element.normalized, vbl.getStride(), (void*)offset);
+        if (element.isInstancing)
+        {
+            glVertexAttribDivisor(currentAttribIndex, 1);
+        }
         offset += element.count * VertexBufferElement::getSizeOfByte(element.type);
     }
 
@@ -43,7 +48,6 @@ void VertexArray::addInstanceData(const VertexBuffer& vb, const unsigned int cou
     vb.unbind();
     m_EnabledAttrib += 1;
 }
-
 
 void VertexArray::bind() const
 {
